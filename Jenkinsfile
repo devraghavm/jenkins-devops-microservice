@@ -28,27 +28,34 @@ pipeline {
 				echo "BUILD_URL - $env.BUILD_URL"
 			}
 		}
+		
 		stage('Compile') {
 			steps {
 				sh "mvn clean compile"
 			}
 		}
+
 		stage('Test') {
 			steps {
 				sh "mvn test"
 			}
 		}
+
 		stage('Integration Test') {
 			steps {
 				sh "mvn failsafe:integration-test failsafe:verify"
 			}
 		}
+
 		stage('Build Docker Image') {
-			// sh "docker build -t devraghavm/currency-exchange-devops:$env.BUILD_TAG ."
-			script {
-				dockerImage = docker.build("devraghavm/currency-exchange-devops:${env.BUILD_TAG}")
+			steps {
+				// sh "docker build -t devraghavm/currency-exchange-devops:$env.BUILD_TAG ."
+				script {
+					dockerImage = docker.build("devraghavm/currency-exchange-devops:${env.BUILD_TAG}")
+				}
 			}
 		}
+
 		stage('Push Docker Image') {
 			steps {
 				script {
